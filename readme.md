@@ -4,6 +4,10 @@ A simple example on how to use Swing UI components from Common Lisp (using ABCL)
 
 This, hopefully, sometime, will become a full featured UI library. Or not.
 
+## Screenshot
+
+ ![](abcl-jazz-demo.png)
+
 ## Prior Art
 
 Snow: Nice, but too verbose, and too detached from the swing classes.
@@ -51,9 +55,9 @@ If this example evolves into a lib, this would be my preferred philosophy:
 
 ## Usage
 
-Requires ABCL.
+Requires ABCL. So, load ABCL. I used ABCL 1.5.0
 
-Require :abcl-contrib, and :jss
+`(require)` :abcl-contrib, and :jss
 
 Useful to do `(setf jss:*muffle-warnings* nil)` as well.
 
