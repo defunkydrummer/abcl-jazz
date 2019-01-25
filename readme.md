@@ -45,7 +45,7 @@ See `swing-test.lisp`
 
 This includes three examples:
 
-- `(concatenate-app)` : Simple UI example using the BorderLayout.
+- `(concatenate-app)` : Simple UI example using the BorderLayout. 
 - `(rst)`: Use of an external UI lib, [RSyntaxTextArea](http://bobbylight.github.io/RSyntaxTextArea/), to open a window that works as a Lisp code editor with syntax highlighting. 
 - Notepad wannabe-app (see below)
 
@@ -124,6 +124,67 @@ Pasted from there: A "notepad"-like application where you just edit text and the
 
 ``` 
 
+The `concatenate-app` example shows how easy is using the BorderLayout from Lisp, compared to doing it from Java.
+See the `add-using-border-layout` function below.
+
+```lisp
+(defun concatenate-app ()
+  (handler-case 
+      (let* ((f (frame "Concatenar archivos"))
+             (list-model (defaultlistmodel))
+             (l (jlist list-model)))
+
+        ;; popup menu for list
+        (add-popupmenu-to-container
+         l
+         (popupmenu "Menu" 
+                    (list
+                     (menuitem "Eliminar item"
+                               (lambda (e)
+                                 (declare (ignore e))
+                                 (let ((confirm
+                                         (show-confirm-dialog f "EstÃ¡ seguro?")))
+                                   (when (eql +dialog-yes+
+                                              confirm)
+                                     ;; remove item from list...
+                                     ;; at index...
+                                     (let ((selected-i
+                                             (#"getSelectedIndex" l)))
+                                       (#"remove" list-model selected-i)))))))))
+        (add-using-borderlayout
+         f
+         :center (scrollpane l)             ;list inside scrollpane
+         :north (label "Ingrese lista de archivos:" +align-center+)
+         :east (button "Agregar" 
+                       (lambda (e)
+                         (declare (ignore e))
+                         ;; add (choose) file
+                         (let* ((chooser (file-chooser))
+                                file)
+                           ;; add extensions to chooser
+                           (file-chooser-add-extension chooser "Archivo CSV" '("csv"))
+                           (file-chooser-add-extension chooser "Archivo de texto" '("txt" "text"))
+                           ;; open file chooser
+                           (setf file
+                                 (open-file-chooser chooser f))
+                           ;;add file to list
+                           (when file
+                             (defaultlistmodel-add list-model file)))))
+         :south (button "Concatenar!"
+                        (lambda (e)
+                          (declare (ignore e))
+                          (show-warning-message f "Not Implemented!"))))
+        (pack f))
+    (java:java-exception (x)
+      (format t "JavaException: ~A ~%" x))
+    (error (x)
+      (format t "Error: ~A ~%" x))))
+
+```
+
+This one is in spanish, because *I speak very... very fluent spanish. Todo está bien chévere. Bien chévere.* (Stevie Wonder, "Don't you worry about a thing"). 
+
+Stevie Wonder, needless to say, is a funky drummer too.
 
 ## Philosophy
 
