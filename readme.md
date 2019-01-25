@@ -61,9 +61,9 @@ Useful to do `(setf jss:*muffle-warnings* nil)` as well.
 
 See `swing-test.lisp`
 
-Pasted from there, "notepad"-like application where you just edit text and the window shows cursor position. Includes menu bars. (Barely implemented, of course)
+Pasted from there: A "notepad"-like application where you just edit text and the window shows cursor position. Includes menu bars. (Barely implemented, of course)
 
-```
+```lisp
 ;; Partial rewrite of https://www.javatpoint.com/notepad
 (defun notepad-app ()
   (let*
@@ -84,7 +84,7 @@ Pasted from there, "notepad"-like application where you just edit text and the w
                             :east (label "   ")
                             :west (label "   "))
     (pack f)
-                                        ;(#"setLocation" f 100 50)
+                                        
 
     ;; menu bar
     (set-menu-bar f 
