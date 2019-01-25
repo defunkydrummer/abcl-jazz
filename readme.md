@@ -29,30 +29,6 @@ Instead of Electron, let's use:
 Note: Not only is swing programming under JAZZ easier than Java, it is also 
       easier, for example, than under Jython (Python for the JVM)
 
-## Philosophy
-
-If this example evolves into a lib, this would be my preferred philosophy:
-
-- should be very easy to learn
-- it is to be designed with the aim of producing easy to write, easy to read
-  GUI code.
- --- note: commands that instantiate swing  UI controls have no hypens
-
- - shouldn't require to learn a whole new DSL or lib. Existing java swing tutorials
-    should tell you 80% of what you need to know.
- --- things that are named 'x' on swing tutorials shall be named 'x' here.
-     we're not inventing new slang.
- - the source code of this lib is to be easy to understand as well
- - typically-used stuff should be non-verbose
- - typical controls (label, textbox, etc) should be easy to instantiate
- - action listeners should be damn easy to instantiate
- - typical configuration parameters of each control (i.e. text box column width)
-   should be already present on instantiation; the other seldom-used
-   parameters should be configured by calling the appropiate methods.
-   in other words, use Jazz syntax to quickly create the UI,
-   and call the appropiate java methods for config options that are not
-   often used.
-
 ## Usage
 
 Requires ABCL. So, load ABCL. I used ABCL 1.5.0
@@ -61,9 +37,17 @@ Requires ABCL. So, load ABCL. I used ABCL 1.5.0
 
 Useful to do `(setf jss:*muffle-warnings* nil)` as well.
 
+Then load `swing.lisp` and try the examples in `swing-test.lisp`. This creates no packages.
+
 ## Example(s)
 
 See `swing-test.lisp`
+
+This includes three examples:
+
+- `(concatenate-app)` : Simple UI example using the BorderLayout.
+- `(rst)`: Use of an external UI lib, [RSyntaxTextArea](http://bobbylight.github.io/RSyntaxTextArea/), to open a window that works as a Lisp code editor with syntax highlighting. 
+- Notepad wannabe-app (see below)
 
 Pasted from there: A "notepad"-like application where you just edit text and the window shows cursor position. Includes menu bars. (Barely implemented, of course)
 
@@ -140,6 +124,30 @@ Pasted from there: A "notepad"-like application where you just edit text and the
 
 ``` 
 
+
+## Philosophy
+
+If this example evolves into a lib, this would be my preferred philosophy:
+
+- should be very easy to learn
+- it is to be designed with the aim of producing easy to write, easy to read
+  GUI code.
+ --- note: commands that instantiate swing  UI controls have no hypens
+
+ - shouldn't require to learn a whole new DSL or lib. Existing java swing tutorials
+    should tell you 80% of what you need to know.
+ --- things that are named 'x' on swing tutorials shall be named 'x' here.
+     we're not inventing new slang.
+ - the source code of this lib is to be easy to understand as well
+ - typically-used stuff should be non-verbose
+ - typical controls (label, textbox, etc) should be easy to instantiate
+ - action listeners should be damn easy to instantiate
+ - typical configuration parameters of each control (i.e. text box column width)
+   should be already present on instantiation; the other seldom-used
+   parameters should be configured by calling the appropiate methods.
+   in other words, use Jazz syntax to quickly create the UI,
+   and call the appropiate java methods for config options that are not
+   often used.
 
 
 ## Author
