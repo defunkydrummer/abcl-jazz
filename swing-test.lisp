@@ -77,7 +77,7 @@
 
 (defun concatenate-app ()
   (handler-case 
-      (let* ((f (frame "Concatenar archivos"))
+      (let* ((f (frame "File Concatenation"))
              (list-model (defaultlistmodel))
              (l (jlist list-model)))
 
@@ -86,41 +86,43 @@
          l
          (popupmenu "Menu" 
                     (list
-                     (menuitem "Eliminar item"
+                     (menuitem "Remove Item"
                                (lambda (e)
                                  (declare (ignore e))
                                  (let ((confirm
-                                         (show-confirm-dialog f "Está seguro?")))
+                                         (show-confirm-dialog f "Are you sure?")))
                                    (when (eql +dialog-yes+
                                               confirm)
                                      ;; remove item from list...
                                      ;; at index...
                                      (let ((selected-i
                                              (#"getSelectedIndex" l)))
-                                       (#"remove" list-model selected-i)))))))))
+                                       (handler-case (#"remove" list-model selected-i)
+                                         (java:java-exception (x)
+                                           (format t "JavaException: ~A ~%" x)))))))))))
         (add-using-borderlayout
          f
          :center (scrollpane l)             ;list inside scrollpane
-         :north (label "Ingrese lista de archivos:" +align-center+)
-         :east (button "Agregar" 
+         :north (label "Enter list of files:" +align-center+)
+         :east (button "Add file" 
                        (lambda (e)
                          (declare (ignore e))
                          ;; add (choose) file
                          (let* ((chooser (file-chooser))
                                 file)
                            ;; add extensions to chooser
-                           (file-chooser-add-extension chooser "Archivo CSV" '("csv"))
-                           (file-chooser-add-extension chooser "Archivo de texto" '("txt" "text"))
+                           (file-chooser-add-extension chooser "CSV file" '("csv"))
+                           (file-chooser-add-extension chooser "Text file" '("txt" "text"))
                            ;; open file chooser
                            (setf file
                                  (open-file-chooser chooser f))
                            ;;add file to list
                            (when file
                              (defaultlistmodel-add list-model file)))))
-         :south (button "Concatenar!"
+         :south (button "Concatenate!"
                         (lambda (e)
                           (declare (ignore e))
-                          (show-warning-message f "Not Implemented!"))))
+                          (show-warning-message f "LOL... not Implemented!"))))
         (pack f))
     (java:java-exception (x)
       (format t "JavaException: ~A ~%" x))

@@ -8,14 +8,39 @@
 
 ;; easy action listener creator
 
+(defun handle-java-error (e)
+  "Stub for handling a JavaException thrown within the Swing UI"
+  (format "handle-java-error: ~A" e))
+
+(defmacro lambda* (&body b)
+  ;; create lambda form where any java exception is catched.
+  (unless (consp (car b))
+    (error "First argument must be a list of variables"))
+  (let ((vars (car b))
+        (body (cdr b)))
+    `(lambda (,@vars)
+       (handler-case
+           (progn ,@body)
+         (java:java-exception (x)
+           (handle-java-error x))))))
+
 (defun actionlistener (handler-function)
   "Easy creation of action listener, handler function requires to be provided.
 Function shall take one parameter -- event (the event)"
   ;; instantiate proxy that implements actionListener
-  (java:jinterface-implementation
+  (java:jinterface-implementation 
    "java.awt.event.ActionListener" 
    "actionPerformed"
-   handler-function))
+   ;; wrap the handler function
+   (lambda* (e)
+     (funcall handler-function e))))
+;; (lambda (e)
+;;   (handler-case
+;;       (funcall handler-function e)
+;;     (java:java-exception (x)
+;;       (handle-java-error x))))))
+
+
 
 ;; helper to test if it works
 (defun %test-actionlistener (listener)
