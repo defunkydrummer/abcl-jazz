@@ -10,7 +10,7 @@
 
 (defun handle-java-error (e)
   "Stub for handling a JavaException thrown within the Swing UI"
-  (format t "handle-java-error: ~A" e)
+  (format t "~40a~%~40a~%" "handle-java-error:" e)
   (force-output)) ;important for showing the message ASAP
 
 
@@ -222,7 +222,7 @@ Function shall take one parameter -- event (ListSelectionListener event)"
 (defun defaultlistmodel-getlist (list-model)
   "Get all elements"
   (loop for x from 0 to (1- (defaultlistmodel-size list-model))
-        collecting (defaultlistmodel-get-element-at x list-model)))
+        collecting (defaultlistmodel-get-element-at list-model x)))
 
 (defun jlist (&optional list-model selection-listener-function)
   "Creats a new JList. Optionally uses a list handler function,
