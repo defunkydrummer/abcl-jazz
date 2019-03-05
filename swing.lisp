@@ -10,19 +10,9 @@
 
 (defun handle-java-error (e)
   "Stub for handling a JavaException thrown within the Swing UI"
-  (format "handle-java-error: ~A" e))
+  (format t "handle-java-error: ~A" e)
+  (force-output)) ;important for showing the message ASAP
 
-(defmacro lambda* (&body b)
-  ;; create lambda form where any java exception is catched.
-  (unless (consp (car b))
-    (error "First argument must be a list of variables"))
-  (let ((vars (car b))
-        (body (cdr b)))
-    `(lambda (,@vars)
-       (handler-case
-           (progn ,@body)
-         (java:java-exception (x)
-           (handle-java-error x))))))
 
 (defun actionlistener (handler-function)
   "Easy creation of action listener, handler function requires to be provided.
@@ -32,13 +22,11 @@ Function shall take one parameter -- event (the event)"
    "java.awt.event.ActionListener" 
    "actionPerformed"
    ;; wrap the handler function
-   (lambda* (e)
-     (funcall handler-function e))))
-;; (lambda (e)
-;;   (handler-case
-;;       (funcall handler-function e)
-;;     (java:java-exception (x)
-;;       (handle-java-error x))))))
+   (lambda (e)
+     (handler-case
+         (funcall handler-function e)
+       (java:java-exception (x)
+         (handle-java-error x))))))
 
 
 
