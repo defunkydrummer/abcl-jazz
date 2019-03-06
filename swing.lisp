@@ -49,7 +49,7 @@ Handler-function is a function that works as the action listener for the button.
   (#"pack" component))
 
 (defun set-visible (component &optional (visible? +true+) )
-  "Set component visible (or not)"
+  "Set component visible (or not). Use Java booleans +true+ + +false+!!"
   (#"setVisible" component visible?))
 
 (defun set-size (component size-x size-y)
@@ -214,6 +214,36 @@ Function shall take one parameter -- event (ListSelectionListener event)"
 (defun defaultlistmodel-get-element-at (list-model index)
   "Obtain element at index. (Index is zero-based)"
   (#"elementAt" list-model index))
+
+(defun defaultlistmodel-insert-element-at (list-model element index)
+  "Insert element at index. (Index is zero-based)"
+  (#"insertElementAt" list-model element index))
+
+(defun defaultlistmodel-remove-element-at (list-model index)
+  "Remove element at index and return it. (Index is zero-based)"
+  (#"remove" list-model index))
+
+;; (defun defaultlistmodel-move-element (list-model index offset)
+;;   "Move up or down element at index. (Index is zero-based)
+;; Offest: -1 = move up, +1 = move down"
+;;   (let ((new-index (+ index offset))
+;;         (elem (defaultlistmodel-get-element-at list-model index))
+;;         (all (defaultlistmodel-getlist list-model)))
+;;     (when (and elem
+;;                (>= new-index 0)
+;;                (< new-index (defaultlistmodel-size list-model)))
+;;       ;; clear list, create it again...
+;;       (#"clear" list-model)
+;;       (loop for x from 0 to (1- (length all))
+;;             do
+;;             (cond
+;;               ((equal x new-index)
+;;                (#"addElement" list-model elem))
+;;               ((equal x index) nil)
+;;               (t (#"addElement" list-model (elt all index)))))
+;;       (defaultlistmodel-insert-element-at list-model elem new-index)
+;;       (defaultlistmodel-remove-element-at list-model index))))
+
 
 (defun defaultlistmodel-size (list-model)
   "Obtain number of elements"
@@ -397,15 +427,46 @@ NOTE: This will set/reset the mouseClicked event handler on the frame."
                          (java:jarray-from-list extensions))))
     (#"addChoosableFileFilter" chooser filter)))
 
+(defun get-file-info (file)
+  "Obtain info from a Java.io.File object as PLIST"
+  (list :absolute-file (#"getAbsoluteFile" file) ;Java.io.File
+        :path (#"getAbsolutePath" file)
+        :name (#"getName" file)
+        :parent (#"getParent" file)))
+
 (defun open-file-chooser (chooser parent-component)
-  "Open file chooser using the selected extensions (list of strings).
-If file was approved, return file name."
+  "Open file chooser.
+If file was approved, return file properties as plist."
   (let ((retval (#"showOpenDialog" chooser parent-component)))
     (if (equal retval
                (jss:get-java-field 'JFileChooser "APPROVE_OPTION"))
         ;; return the chosen filename
-        (#"getName" (#"getSelectedFile" chooser)))))
+        (let ((file (#"getSelectedFile" chooser)))
+          (get-file-info file)))))
 
+(defun open-file-chooser-save (chooser parent-component)
+  "Open file chooser for SAVE.
+If file was approved, return file properties as plist."
+  (let ((retval (#"showSaveDialog" chooser parent-component)))
+    (if (equal retval
+               (jss:get-java-field 'JFileChooser "APPROVE_OPTION"))
+        ;; return the chosen filename
+        (let ((file (#"getSelectedFile" chooser)))
+          (get-file-info file)))))
+
+(defun open-file-chooser-multiple-selection (chooser parent-component)
+  "Open file chooser using the selected extensions (list of strings).
+If file was approved, return list of file paths."
+  (#"setMultiSelectionEnabled" chooser +true+)
+  (let ((retval (#"showOpenDialog" chooser parent-component)))
+    (if (equal retval
+               (jss:get-java-field 'JFileChooser "APPROVE_OPTION"))
+        ;; return the chosen filenames (ALL)
+        
+        (let ((files (#"getSelectedFiles" chooser)))
+          (loop for f across files
+                collecting (get-file-info f))))))
+       
 
 
 ;; -------------------------------------------------------------------------------------

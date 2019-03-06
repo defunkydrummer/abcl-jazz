@@ -118,7 +118,7 @@
                                  (open-file-chooser chooser f))
                            ;;add file to list
                            (when file
-                             (defaultlistmodel-add list-model file)))))
+                             (defaultlistmodel-add list-model (getf file :path))))))
          :south (button "Concatenate!"
                         (lambda (e)
                           (declare (ignore e))
