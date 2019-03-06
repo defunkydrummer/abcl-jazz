@@ -185,8 +185,15 @@ which calls caret-update-function (sending event e) on change in the caret posit
 ;; TODO: JCheckBox : ItemListener
 ;; TODO: JRadioButton
 ;; TODO: JComboBox
-;; TODO: JTable
-;; TODO: JTable : ListSelectionListener
+
+;; (defun jcombobox (items)
+;;   "Create a JComboBox with the following items (list)"
+;;   (jss:new 'JComboBox
+;;            (etypecase items
+;;              (cons items)
+;;              (vector items))))
+
+
 
 (defun listselectionlistener (handler-function)
   "Easy creation of ListSelectionListener, handler function requires to be provided.
@@ -406,6 +413,32 @@ NOTE: This will set/reset the mouseClicked event handler on the frame."
   (if orientation
       (jss:new 'JSeparator orientation)
       (jss:new 'JSeparator)))
+
+;; ------------------------------------------------------------------------
+;; JTABLE
+;; ------------------------------------------------------------------------
+;; TODO: JTable
+
+;; helper
+(defun list-to-jarray (list)
+  "Convert list to java array if necessary."
+  (cond 
+        ((consp list) (java:jarray-from-list list))
+        ((java:java-object-p list) list)
+        (t (error "Can't conver this list."))))
+
+(defun defaulttablemodel (column-names)
+  "Create DefaultTableModel, column names not optional..."
+  (let ((cols (list-to-jarray column-names)))
+    (jss:new 'DefaultTableModel
+             (java:jnew-array "java.lang.String" 0 0) ;data is Object[][]
+             cols))) ;String[] columns
+
+(defun jtable (table-model)
+  "Create table based on DefaultTableModel"
+  (jss:new 'JTable table-model))
+
+
 
 ;; TODO: JProgressbar?
 ;; TODO: JTree?
