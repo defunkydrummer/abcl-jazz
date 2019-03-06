@@ -164,6 +164,15 @@ the constraints specified (i.e. a string)."
       (#"setColumns" ta columns))
     ta))
 
+;; text area font example
+(defun font-fixed (size)
+  "Get fixed spacing font of required size"
+  (jss:new "java.awt.Font" "Courier New" 
+           (jss:get-java-field 'java.awt.Font "PLAIN") size))
+
+(defun textarea-set-font (tx font)
+  (#"setFont" tx font))
+
 (defun add-caretlistener (text-component caret-update-function)
   "Create and add a CaretListener for a text component, 
 which calls caret-update-function (sending event e) on change in the caret position of a text component."
@@ -184,14 +193,6 @@ which calls caret-update-function (sending event e) on change in the caret posit
 ;; TODO: JCheckBox
 ;; TODO: JCheckBox : ItemListener
 ;; TODO: JRadioButton
-;; TODO: JComboBox
-
-;; (defun jcombobox (items)
-;;   "Create a JComboBox with the following items (list)"
-;;   (jss:new 'JComboBox
-;;            (etypecase items
-;;              (cons items)
-;;              (vector items))))
 
 
 
@@ -417,7 +418,7 @@ NOTE: This will set/reset the mouseClicked event handler on the frame."
 ;; ------------------------------------------------------------------------
 ;; JTABLE
 ;; ------------------------------------------------------------------------
-;; TODO: JTable
+
 
 ;; helper
 (defun list-to-jarray (list)
@@ -438,6 +439,19 @@ NOTE: This will set/reset the mouseClicked event handler on the frame."
   "Create table based on DefaultTableModel"
   (jss:new 'JTable table-model))
 
+
+;; ------------------------------------------------------------------------
+;; COMBO BOX
+;; ------------------------------------------------------------------------
+
+(defun jcombobox (items)
+  "Create a JComboBox with the following items (list of strings)"
+  (jss:new 'JComboBox
+           (list-to-jarray items)))
+
+(defun jcombobox-selecteditem (cb)
+  "Get the selected item of the combo box."
+  (#"getSelectedItem" cb))
 
 
 ;; TODO: JProgressbar?
